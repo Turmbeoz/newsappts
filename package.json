@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.10.15",
     "axios": "^1.2.0",
+    "country-iso-3-to-2": "^1.1.1",
     "dotenv": "^16.0.3",
     "iso-639-1": "^2.1.15",
     "react": "^18.2.0",

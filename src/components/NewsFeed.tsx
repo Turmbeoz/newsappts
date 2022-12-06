@@ -6,23 +6,20 @@ import BorderFeed from "./BorderFeed";
 
 function NewsFeed({ home, activeFeed }) {
   if (!activeFeed){
-    return;
+    return <></>;
   }
   // home variable is the home country
   const { userInfo, setUserInfo } = useContext(NewsUserContext);
   const { newCountry } = userInfo;
-  console.log(home.cca2)
   const [flag, setFlag] = useState(null)
   const [newsData, setNewsData] = useState();
   const [borderSwitchBool, setBorderSwitchBool] = useState(false)
   const [translateData, setTranslateData] = useState({ ready: false, arr: [], langStr: [], translated: [], indices: [], apiCallBool: true })
-  function getTheNews(url){
+  function getTheNews(urlx: string){
     console.log("Getting the news")
-    fetch(url)
+    const grabber = (url: string)=> fetch(url)
       .then((res) => res.json())
       .then((resJson) => {
-        console.log("Got the data");
-        console.log(resJson);
         localStorage.setItem('stories', JSON.stringify(resJson.results));
         setNewsData(() => resJson);
         const rez = resJson.results
@@ -34,35 +31,33 @@ function NewsFeed({ home, activeFeed }) {
               translateData.indices.push(i)
           }
         }
-        console.log(translateData);
         // make api call here inside of the useEffect and inside of the response!
         // const x = fetchTranslateText(translateData.langStr[0], translateData.arr);
         // console.log(x)
         setTranslateData(() => translateData)
     }).catch((err) =>{
-      console.log("HEres the error")
+      console.log("HEres the error");
+      console.log(url.split("&"))
+      console.log(url)
+      const partial = url.split("&")
+      console.log()
+      grabber(partial[0]+"&"+partial[2])
     })
+    grabber(urlx)
   }
   const translatedArr = [];
 
-
-  // &country=${languageCode}
-  // Get news request - 
-  console.log("The Words...");
-  console.log(home)
-  console.log(home.borders)
   let newsQueryString = `https://newsdata.io/api/1/news?apikey=pub_139957d57ebfc365940ccdcd05c1f0136ff10&country=${home.cca2}`;
   let newQ = ''
   if (home.name){
     const commonName = home.name.common
     const officialName = home.name.official.split("Republic of ");
-    const nativeName = Object.values(home.name.nativeName)[0].common
+    const nativeName = Object.values(home.name.nativeName)[0].common;
     const demonym = home.demonyms.eng.f
     const searchParams = [commonName, demonym, officialName[officialName.length-1], nativeName, ...home.altSpellings.slice(1)];
     const uniqueParams = searchParams.filter((element, index) => {
       return searchParams.indexOf(element) === index;
   });
-    console.log(uniqueParams)
     for (let i = 0; i < uniqueParams.length; i++){
       const orParam = i === 0? "&q=" : "%20OR%20"
       const noRepub = uniqueParams[i].replaceAll("Republic of", "")
@@ -76,16 +71,13 @@ function NewsFeed({ home, activeFeed }) {
 
     
   }
-  console.log(newsQueryString + newQ)
   useEffect(()=>{
-    console.log("IN the effect... anyone here?");
-    console.log(newsData)
-    console.log(userInfo)
+
     if (!(newsData) && home.name || newCountry === true){
       console.log("No stories found");
       getTheNews(newsQueryString + newQ)
       setUserInfo(() => {
-        return {...userInfo, newCountry: false}})
+        return {...userInfo, newCountry: false, bordersActive: true }})
     }else{
       const newsStories = JSON.parse(localStorage.getItem("stories"))
       setNewsData(() => newsStories);
@@ -121,7 +113,8 @@ function NewsFeed({ home, activeFeed }) {
     }
 
     return (
-      <div className="news-feed" style={newsFeedStyle}> 
+      <div className="news-feed" style={newsFeedStyle}>
+
         <ul style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", paddingLeft: "3px" }}>{themStories}</ul>
       
     </div>
