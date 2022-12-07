@@ -14,10 +14,10 @@
   will-change: filter;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #a1b6b3aa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #e9eaebaa);
 }
 
 @keyframes logo-spin {
@@ -53,3 +53,18 @@
   margin: 2px;
   text-align: left;
 }
+ /* Hide scrollbar for Chrome, Safari and Opera */
+ .border-box::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.border-box {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.App{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+} 

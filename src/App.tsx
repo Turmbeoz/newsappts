@@ -21,7 +21,7 @@ function App() {
     const finArr = [];
     for (let i=0; i<listObj.length; i++){
       // console.log(listObj[i].name.common)
-      finArr.push({ name: listObj[i].name.common, objIndex: i })
+      finArr.push({ name: listObj[i].name.common, objIndex: i, cca2: (listObj[i].cca2).toLowerCase() })
     }
     return finArr;
 

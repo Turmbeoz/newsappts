@@ -28,7 +28,7 @@ function NewsFeed({ home, activeFeed }) {
           if (story.language != "english"){
               translateData.arr.push(story.title)
               translateData.langStr.push(story.language);
-              translateData.indices.push(i)
+              translateData.indices.push(i);
           }
         }
         // make api call here inside of the useEffect and inside of the response!
@@ -37,11 +37,9 @@ function NewsFeed({ home, activeFeed }) {
         setTranslateData(() => translateData)
     }).catch((err) =>{
       console.log("HEres the error");
-      console.log(url.split("&"))
-      console.log(url)
-      const partial = url.split("&")
-      console.log()
-      grabber(partial[0]+"&"+partial[2])
+      console.log(err);
+
+      // grabber(partial[0]+"&"+partial[2])
     })
     grabber(urlx)
   }
@@ -93,7 +91,7 @@ function NewsFeed({ home, activeFeed }) {
         marginTop: "12px",
         backgroundColor: "white",
         width: "100%",
-        height: "70vh",
+        height: "85vh",
         gap: "1rem",
         maxWidth: "600px"
     }

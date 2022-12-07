@@ -2,7 +2,7 @@ import React from 'react'
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import {  useState, useContext } from 'react';
 import {NewsUserContext} from '../customHooksAndFuncs/userNewsContext'
-
+import availArr from "../customHooksAndFuncs/availableCoonutriesonAPI"
 
 
 
@@ -22,7 +22,8 @@ function CountrySelect({ countries, nickname }) {
   for (let i=0; i<countries.length; i++){
     dropDownList.push(<MenuItem id={countries[i].objIndex} key={countries[i].objIndex} value={countries[i].name}>{countries[i].name}</MenuItem>)
   }
-
+  console.log(countries);
+  console.log(availArr)
   return (
     <div className="bg-info"> 
     <h1 style={{

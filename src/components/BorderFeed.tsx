@@ -1,7 +1,9 @@
 import { useState, useContext, useEffect } from "react"
 import {NewsUserContext} from '../customHooksAndFuncs/userNewsContext';
 import getCountryISO2 from "country-iso-3-to-2";
-import availArr from "../customHooksAndFuncs/availableCoonutriesonAPI"
+import availArr from "../customHooksAndFuncs/availableCoonutriesonAPI";
+import { Modal, Box, Typography, Link } from '@mui/material'
+import BorderHeadlineCard from "./BorderHeadlineCard"
 
 
 function BorderFeed({ borderCountries }){
@@ -10,29 +12,39 @@ function BorderFeed({ borderCountries }){
   const [state, setState] = useState("Dem Berders!!");
   const { userInfo, setUserInfo } = useContext(NewsUserContext);
   function getTheOtherCountriesNews(arrofThreeLetters: string[]){
-    let newsQueryString = `https://newsdata.io/api/1/news?apikey=pub_139957d57ebfc365940ccdcd05c1f0136ff10&country=`;
+    if (!arrofThreeLetters){
+      return null
+    }
+    // let newsQueryString = `https://newsdata.io/api/1/news?apikey=pub_139957d57ebfc365940ccdcd05c1f0136ff10&country=`;
+    let newsQueryString = `https://newsdata.io/api/1/news?apikey=pub_139957d57ebfc365940ccdcd05c1f0136ff10`;
+    const xxx = arrofThreeLetters.map((x)=> getCountryISO2(x).toLowerCase())
+    const finArr = [];
+    let indJumper = 0;
+    while (xxx.length > 0){
+      const twoLetter = xxx.shift();
+      const indOfTwoLetter = availArr.indexOf(twoLetter, indJumper);
+      if (indOfTwoLetter >= 0){
+        finArr.push(twoLetter)
+      } 
+      indJumper = Math.max(indJumper, twoLetter+1)
+
+
+    }
     let newQ = ''
-    if (arrofThreeLetters.length > 5){
-      arrofThreeLetters.sort(() => Math.random() - 0.5);
-      arrofThreeLetters.length = 5
+    if (finArr.length > 5){
+      finArr.sort(() => Math.random() - 0.5);
+      finArr.length = 5
     }
-    for (let i = 0; i < arrofThreeLetters.length;){
-      arrofThreeLetters[i] = getCountryISO2(arrofThreeLetters[i])
-    }
-    const filterArr = arrofThreeLetters.filter((x) => availArr.includes(x));
-    console.log(filterArr)
-    for (let i = 0; i < filterArr.length; i++){
+    for (let i = 0; i < finArr.length; i++){
         
-        const orParam = i === 0? "" : ","
-        newQ = newQ + orParam + getCountryISO2(filterArr[i])
+        const orParam = i === 0? "&country=" : ","
+        newQ = newQ + orParam + finArr[i]
     }  
-    newsQueryString = newsQueryString + newQ;
-    console.log(newsQueryString)
+
+    console.log(newsQueryString+newQ)
     fetch(newsQueryString)
     .then((res) => res.json())
     .then((resJson) => {
-      console.log("Got the data IN DA BODERDERRERE");
-      console.log(resJson.results);
       localStorage.setItem('storiesFromDaBorder', JSON.stringify(resJson.results));
       setBorderStories(() => resJson.results);
       const rez = resJson.results
@@ -56,12 +68,10 @@ function BorderFeed({ borderCountries }){
   })
 }
 useEffect(()=>{
-  setTimeout(()=>{
-    // getTheOtherCountriesNews(borderCountries)
-    console.log(borderCountries)
+        getTheOtherCountriesNews(borderCountries)
 
-   }, 800) // Need to get an array of two letter country symbols
-}, [])
+      
+    }, [userInfo])
     if (!(userInfo.bordersActive)){
         return 
     }else if(!borderCountries || borderCountries.length === 0){
@@ -71,7 +81,7 @@ useEffect(()=>{
     
 
     console.log("Inside borders");
-
+    console.log(borderStories)
 
 
     
@@ -79,16 +89,29 @@ useEffect(()=>{
         border: "solid 1px black",
         overflowY: "scroll",
         marginTop: "12px",
-        backgroundColor: "aqua",
+        backgroundColor: "hsl(0, 0%, 55%)",
         width: "30%",
         gap: "1rem",
         maxWidth: "600px",
         display: "flex",
-        flexDirection: "column"
+        flexDirection: "column",
+        height: "85vh",
+        
+    }
+    const borderStoriesJSX = [];
+    for (let i = 0; i < borderStories.length; i++){
+      // console.log(i)
+      const jsx = (<BorderHeadlineCard ind={i} title={borderStories[i].title} description={borderStories[i].description}/>);
+      borderStoriesJSX.push(jsx)
     }
     return (<>
     
-    <div style={daStyle}></div>
+    <div style={daStyle}>
+
+      <ul id="border-box" style={{ display: "flex", flexDirection: "column", justifyContent: "center", listStyleType: "none"}}>
+        {borderStoriesJSX}
+      </ul>
+    </div>
     </>)
 }
 
